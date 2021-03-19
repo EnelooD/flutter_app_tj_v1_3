@@ -1,27 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_tj_v1_3/loginuser/login_ui.dart';
+import 'package:flutter_app_tj_v1_3/screens/drawer.dart';
 import 'package:flutter_app_tj_v1_3/services/api_service.dart';
 import 'package:flutter_app_tj_v1_3/screens/progress_dialog.dart';
 import 'package:flutter_app_tj_v1_3/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 class FavoriteUI extends StatefulWidget {
   _FavoriteUIState createState() => _FavoriteUIState();
 }
 
 class _FavoriteUIState extends State<FavoriteUI> {
+  SharedPreferences sharedPreferences;
+  String LoginId;
+
+  _getUserId() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      LoginId = sharedPreferences.getString("LoginId");
+    });
+  }
+
   void initState() {
     // TODO: implement initState
     super.initState();
-    getallLocality();
+    _getUserId();
   }
 
-  _Logout() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    setState(() {
-      sharedPreferences.setInt("LoginFlag", 2);
-    });
-  }
 
   ProgressDialog progressDialog =
       ProgressDialog.getProgressDialog('Processing...', true);
@@ -41,60 +46,9 @@ class _FavoriteUIState extends State<FavoriteUI> {
           style: Constants.titleStyle,
         ),
       ),
-      drawer: Drawer(
-        child: ListView(
-          // Important: Remove any padding from the ListView.
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Column(
-                children: [
-                  Stack(
-                    children: <Widget>[
-                      Center(
-                        child: Image.asset(
-                          'assets/images/p_5.png',
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              decoration: BoxDecoration(
-                color: Colors.brown,
-              ),
-            ),
-            ListTile(
-              title: Text('Item 1'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
-            ListTile(
-              title: Text('Manage a place'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
-              },
-            ),
-            ListTile(
-              title: Text('LOGOUT'),
-              onTap: () {
-                //TODO
-                _Logout();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginUI()),
-                  (Route<dynamic> route) => false,
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: DrawerAom(),
       body: Container(
-        padding: const EdgeInsets.only(top: 90),
+        padding: const EdgeInsets.only(top: 70),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -106,73 +60,90 @@ class _FavoriteUIState extends State<FavoriteUI> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-            children: [
-              Container(
-                height: (500),
-                child: FutureBuilder(
-                  future: getallLocality(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return ListView.separated(
-                        separatorBuilder: (context, index) {
-                          return Divider(
-                            height: 0.0,
-                          );
-                        },
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                  vertical: 24.0,
-                                ),
-                                height: MediaQuery.of(context).size.height * 0.35,
-                                child: Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Card(
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    elevation: 7,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: InkWell(
-                                      onTap: () => () {},
-                                      child: Container(
-                                        width: MediaQuery.of(context).size.width *
-                                            0.95,
-                                        child: Image.network(
-                                          '${URL}${snapshot.data[index].locImage}',
-                                          loadingBuilder:
-                                              (context, child, progress) {
-                                            return progress == null
-                                                ? child
-                                                : LinearProgressIndicator(
-                                              backgroundColor: Colors.brown,
-                                            );
-                                          },
-                                          fit: BoxFit.cover,
-                                        ),
+          child: Center(
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.8,
+              child: FutureBuilder(
+                future: apigetLocalityFavorite(LoginId),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.separated(
+                      separatorBuilder: (context, index) {
+                        return Divider(
+                          height: 0,
+                        );
+                      },
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          height:
+                          MediaQuery.of(context).size.height * 0.40,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 10.0),
+                            child: Stack(
+                              children: [
+                                Card(
+                                  clipBehavior:
+                                  Clip.antiAliasWithSaveLayer,
+                                  elevation: 15,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(20),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) {
+                                      //       return DatailLocalityUI(
+                                      //         locId: snapshot.data[index].locId,
+                                      //         userId: snapshot.data[index].userId,
+                                      //         locName:
+                                      //         snapshot.data[index].locName,
+                                      //         locDetails:
+                                      //         snapshot.data[index].locDetails,
+                                      //         locImage:
+                                      //         snapshot.data[index].locImage,
+                                      //         locPostalcode: snapshot
+                                      //             .data[index].locPostalcode,
+                                      //       );
+                                      //     },
+                                      //   ),
+                                      // );
+                                    },
+                                    child: Container(
+                                      child: Image.network(
+                                        '${URL}${snapshot.data[index].locImage}',
+                                        loadingBuilder:
+                                            (context, child, progress) {
+                                          return progress == null
+                                              ? child
+                                              : LinearProgressIndicator(
+                                            backgroundColor:
+                                            Colors.brown,
+                                          );
+                                        },
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    } else {
-                      return progressDialog;
-                    }
-                  },
-                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  } else {
+                    return progressDialog;
+                  }
+                },
               ),
-            ],
+            ),
           ),
         ),
       ),

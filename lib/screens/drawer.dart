@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_tj_v1_3/managelocality/homemanage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_app_tj_v1_3/loginuser/login_ui.dart';
 
@@ -60,6 +61,8 @@ class _DrawerAomState extends State<DrawerAom> {
                     ),
                     Container(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
                         children: [
                           Text(LoginEmail==null?'':LoginEmail),
                           Text(LoginName==null?'':LoginName),
@@ -75,17 +78,13 @@ class _DrawerAomState extends State<DrawerAom> {
             ),
           ),
           ListTile(
-            title: Text('Item 1'),
+            title: Text('MANAGE A PLACE'),
             onTap: () {
-              // Update the state of the app.
-              // ...
-            },
-          ),
-          ListTile(
-            title: Text('Manage a place'),
-            onTap: () {
-              // Update the state of the app.
-              // ...
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => ManagePlaceUI()),
+                    (Route<dynamic> route) => false,
+              );
             },
           ),
           ListTile(

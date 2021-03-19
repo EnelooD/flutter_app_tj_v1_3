@@ -133,7 +133,7 @@ class _RegisterUIState extends State<RegisterUI> {
       return;
     }
 
-    await apiregisterService(
+    await apiRegisterService(
       userName.text.trim(),
       userEmail.text.trim(),
       userPassword.text.trim(),
@@ -204,7 +204,7 @@ class _RegisterUIState extends State<RegisterUI> {
                       Icons.location_history,
                       color: Colors.brown,
                     ),
-                    hintText: 'User ID',
+                    hintText: 'User Name',
                   ),
                 ),
               ),

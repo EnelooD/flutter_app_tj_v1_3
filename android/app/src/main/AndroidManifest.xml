@@ -2,7 +2,8 @@
     package="oomhen.flutter_app_tj_v1_3">
    <application
         android:label="Thailand Jenny"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/launcher_icon"
+        android:requestLegacyExternalStorage="true">
         <meta-data android:name="com.google.android.geo.API_KEY"
            android:value="AIzaSyDM8tA56fxRFu1Dvu9unJx2Os42CyFZyVk"/>
         <activity

@@ -6,7 +6,6 @@ class Locality {
   String locDetails;
   String locPostalcode;
   String locStatus;
-  String locDate;
   String locImage;
 
   Locality(
@@ -17,7 +16,6 @@ class Locality {
         this.locDetails,
         this.locPostalcode,
         this.locStatus,
-        this.locDate,
         this.locImage});
 
   Locality.fromJson(Map<String, dynamic> json) {
@@ -28,7 +26,6 @@ class Locality {
     locDetails = json['locDetails'];
     locPostalcode = json['locPostalcode'];
     locStatus = json['locStatus'];
-    locDate = json['locDate'];
     locImage = json['locImage'];
   }
 
@@ -41,7 +38,6 @@ class Locality {
     data['locDetails'] = this.locDetails;
     data['locPostalcode'] = this.locPostalcode;
     data['locStatus'] = this.locStatus;
-    data['locDate'] = this.locDate;
     data['locImage'] = this.locImage;
     return data;
   }

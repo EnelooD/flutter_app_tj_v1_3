@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app_tj_v1_3/models/member.dart';
 import 'package:flutter_app_tj_v1_3/screens/dataillocality_ui.dart';
 import 'package:flutter_app_tj_v1_3/screens/drawer.dart';
 import 'package:flutter_app_tj_v1_3/screens/progress_dialog.dart';
@@ -14,6 +13,8 @@ class HomeUI extends StatefulWidget {
 }
 
 class _HomeUIState extends State<HomeUI> {
+  bool showFavorite = true;
+
   ProgressDialog progressDialog =
       ProgressDialog.getProgressDialog('Processing...', true);
   final String URL =
@@ -103,7 +104,7 @@ class _HomeUIState extends State<HomeUI> {
                       return ListView.separated(
                         separatorBuilder: (context, index) {
                           return Divider(
-                            height: 20,
+                            height: 0,
                           );
                         },
                         itemCount: snapshot.data.length,
@@ -113,51 +114,82 @@ class _HomeUIState extends State<HomeUI> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 10.0, vertical: 10.0),
-                              child: Card(
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                elevation: 15,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return DatailLocalityUI(
-                                            locId: snapshot.data[index].locId,
-                                            userId: snapshot.data[index].userId,
-                                            locName:
-                                            snapshot.data[index].locName,
-                                            locDetails:
-                                            snapshot.data[index].locDetails,
-                                            locImage:
-                                            snapshot.data[index].locImage,
-                                            locPostalcode: snapshot
-                                                .data[index].locPostalcode,
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.95,
-                                    child: Image.network(
-                                      '${URL}${snapshot.data[index].locImage}',
-                                      loadingBuilder:
-                                          (context, child, progress) {
-                                        return progress == null
-                                            ? child
-                                            : LinearProgressIndicator(
-                                          backgroundColor: Colors.brown,
+                              child: Stack(
+                                children: [
+                                  Card(
+                                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                                    elevation: 15,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return DatailLocalityUI(
+                                                locId:
+                                                    snapshot.data[index].locId,
+                                                userId:
+                                                    snapshot.data[index].userId,
+                                                locName: snapshot
+                                                    .data[index].locName,
+                                                locDetails: snapshot
+                                                    .data[index].locDetails,
+                                                locImage: snapshot
+                                                    .data[index].locImage,
+                                                locPostalcode: snapshot
+                                                    .data[index].locPostalcode,
+                                              );
+                                            },
+                                          ),
                                         );
                                       },
-                                      fit: BoxFit.cover,
+                                      child: Container(
+                                        child: Image.network(
+                                          '${URL}${snapshot.data[index].locImage}',
+                                          loadingBuilder:
+                                              (context, child, progress) {
+                                            return progress == null
+                                                ? child
+                                                : LinearProgressIndicator(
+                                                    backgroundColor:
+                                                        Colors.brown,
+                                                  );
+                                          },
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            if (showFavorite == true) {
+                                              setState(() {
+                                                showFavorite = false;
+                                              });
+                                            } else {
+                                              setState(() {
+                                                showFavorite = true;
+                                              });
+                                            }
+                                          },
+                                          icon: Icon(
+                                            showFavorite
+                                                ? Icons.favorite_outline
+                                                : Icons.favorite_outlined,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
