@@ -7,19 +7,21 @@ class DatailLocalityUI extends StatefulWidget {
   _DatailLocalityUIState createState() => _DatailLocalityUIState();
 
   String locId;
-  String userId;
   String locName;
   String locDetails;
   String locImage;
   String locPostalcode;
+  String userName;
+  String userEmail;
 
   DatailLocalityUI(
       {this.locId,
-      this.userId,
       this.locName,
       this.locDetails,
       this.locImage,
-      this.locPostalcode});
+      this.locPostalcode,
+      this.userName,
+      this.userEmail});
 }
 
 class _DatailLocalityUIState extends State<DatailLocalityUI> {
@@ -92,6 +94,8 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                           bottomLeft: Radius.circular(30),
                           bottomRight: Radius.circular(30)),
                       child: Container(
+                        width: MediaQuery.of(context).size.height * 1,
+                        height: MediaQuery.of(context).size.height * 0.35,
                         child: Image.network(
                           '${URL}${widget.locImage}',
                           loadingBuilder: (context, child, progress) {
@@ -154,7 +158,7 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                     vertical: 10.0,
                                   ),
                                   child: Text(
-                                    'userName:${widget.userId}, userEmail:${widget.userId}',
+                                    'userName:${widget.userName}, userEmail:${widget.userEmail}',
                                     style: TextStyle(
                                       color: Colors.white,
                                     ),

@@ -101,59 +101,131 @@ class _RegisterUIState extends State<RegisterUI> {
     );
   }
 
+  Future<void> showAlertCreate(String msgTitle, String msgContent) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              4.0,
+            ),
+          ),
+          title: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      color: Colors.brown,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          msgTitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                child: Text(
+                  msgContent,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.brown,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.brown),
+                    ),
+                    child: Text(
+                      'ตกลง',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginUI()),
+                            (Route<dynamic> route) => false,
+                      );
+                      apiRegisterService(
+                        userName.text.trim(),
+                        userEmail.text.trim(),
+                        userPassword.text.trim(),
+                        userStatus,
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    width: 16.0,
+                  ),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                      MaterialStateProperty.all<Color>(Colors.brown),
+                    ),
+                    child: Text(
+                      'ยกเลิก',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   _checkCreate() async {
 
     if (userName.text.trim().length == 0) {
       showAlert('คำเตือน', 'ลืมป้อน Username หรือเปล่าจ๊ะ');
-      return;
-    }
-
-    if (userEmail.text.trim().length == 0) {
+    }else if (userEmail.text.trim().length == 0) {
       showAlert('คำเตือน', 'ลืมป้อน Email หรือเปล่าจ๊ะ');
-      return;
-    }
-
-    if (userPassword.text.trim().length < 6) {
+    }else if (userPassword.text.trim().length < 6) {
       showAlert('คำเตือน', 'Password ต้อง 6 ตัวขึ้นไปนะจ๊ะ');
-      return;
-    }
-
-    if (userConPassword.text.trim().length < 6) {
+    }else if (userConPassword.text.trim().length < 6) {
       showAlert('คำเตือน', 'Confirm Password ต้อง 6 ตัวขึ้นไปนะจ๊ะ');
-      return;
-    }
-
-    if (userPassword.text.trim() != userConPassword.text.trim()) {
+    }else if (userPassword.text.trim() != userConPassword.text.trim()) {
       showAlert('คำเตือน', 'Password ต้องเหมือนกัน Confirm Password');
-      return;
-    }
-
-    if (checkBoxValue == false) {
+    }else if (checkBoxValue == false) {
       showAlert('คำเตือน', 'checkBoxValue');
-      return;
+    }else{
+      showAlertCreate("ยืนยัน", "ต้องการยืนยันการลงทะเบียน");
     }
-
-    await apiRegisterService(
-      userName.text.trim(),
-      userEmail.text.trim(),
-      userPassword.text.trim(),
-      userStatus,
-    ).then((value) {
-      print(value.toString());
-      if (value == '1') {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => LoginUI()),
-              (Route<dynamic> route) => false,
-        );
-      }
-      if (value == '2') {
-        showAlert('ผลการทำงาน', 'Username Password ไม่ถูกต้อง');
-      }
-      if (value == '3') {
-        showAlert('คำเตือน', 'มีความผิดพลาดในการทำงานกรุณาลองใหม่อีกครั้ง');
-      }
-    });
   }
 
   void initState() {

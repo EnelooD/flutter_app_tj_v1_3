@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app_tj_v1_3/managelocality/homemanage.dart';
+import 'package:flutter_app_tj_v1_3/services/api_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,8 +25,8 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
 
   //import 'dart:io';
   File _selectImage;
-  String _selectImageBase64;
-  String _selectImageName;
+  String _selectImageBase64 = '';
+  String _selectImageName = '';
 
   @override
   bool checkBoxValue = false;
@@ -97,10 +99,214 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
   }
 
   @override
+  Future<void> showAlert(String msgTitle, String msgContent) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              4.0,
+            ),
+          ),
+          title: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      color: Colors.brown,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          msgTitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                child: Text(
+                  msgContent,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.brown,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.brown),
+                    ),
+                    child: Text(
+                      'ตกลง',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
+  Future<void> showAlertCreate(String msgTitle, String msgContent) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              4.0,
+            ),
+          ),
+          title: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      color: Colors.brown,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Text(
+                          msgTitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                child: Text(
+                  msgContent,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.brown,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 16.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.brown),
+                    ),
+                    child: Text(
+                      'ตกลง',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => ManagePlaceUI()),
+                            (Route<dynamic> route) => false,
+                      );
+                      apiRegisterLocalityService(
+                        userId,
+                        locName.text,
+                        locDetails.text,
+                        locPostalcode.text,
+                        locStatus,
+                        _selectImageName,
+                        _selectImageBase64,
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    width: 16.0,
+                  ),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.brown),
+                    ),
+                    child: Text(
+                      'ยกเลิก',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
+  _checkCreate() async {
+    if (locName.text.trim().length == 0) {
+      showAlert('คำเตือน', 'ลืมป้อน locName หรือเปล่าจ๊ะ');
+    } else if (locDetails.text.trim().length == 0) {
+      showAlert('คำเตือน', 'locDetails');
+    } else if (locPostalcode.text.trim().length < 5) {
+      showAlert('คำเตือน', 'locPostalcode');
+    } else if (checkBoxValue == false) {
+      showAlert('คำเตือน', 'checkBoxValue');
+    } else if (_selectImageName.length == 0) {
+      showAlert('คำเตือน', 'เลือกรูป');
+    } else {
+      showAlertCreate("ยืนยัน", "ต้องการยืนยันการลงทะเบียน");
+    }
+  }
 
-  void initState(){
+  void initState() {
     // TODO: implement initState
     _getUserId();
     locStatus = '1';
@@ -307,8 +513,14 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
                           MaterialStateProperty.all<Color>(Colors.brown),
                     ),
                     onPressed: () {
-                      print('${userId}');
-                      //_checkCreate();
+                      // print('${userId}');
+                      // print('${locStatus}');
+                      // print('${locName}');
+                      // print('${locDetails}');
+                      // print('${locPostalcode}');
+                      // print('${_selectImageName}');
+                      // print('${_selectImageBase64}');
+                      _checkCreate();
                     },
                     child: Text(
                       'Create',

@@ -129,24 +129,21 @@ class _HomeUIState extends State<HomeUI> {
                                           MaterialPageRoute(
                                             builder: (context) {
                                               return DatailLocalityUI(
-                                                locId:
-                                                    snapshot.data[index].locId,
-                                                userId:
-                                                    snapshot.data[index].userId,
-                                                locName: snapshot
-                                                    .data[index].locName,
-                                                locDetails: snapshot
-                                                    .data[index].locDetails,
-                                                locImage: snapshot
-                                                    .data[index].locImage,
-                                                locPostalcode: snapshot
-                                                    .data[index].locPostalcode,
+                                                locId: snapshot.data[index].locId,
+                                                locName: snapshot.data[index].locName,
+                                                locDetails: snapshot.data[index].locDetails,
+                                                locImage: snapshot.data[index].locImage,
+                                                locPostalcode: snapshot.data[index].locPostalcode,
+                                                userName: snapshot.data[index].userName,
+                                                userEmail: snapshot.data[index].userEmail,
                                               );
                                             },
                                           ),
                                         );
                                       },
                                       child: Container(
+                                        width: MediaQuery.of(context).size.height * 0.45,
+                                        height: MediaQuery.of(context).size.height * 0.3,
                                         child: Image.network(
                                           '${URL}${snapshot.data[index].locImage}',
                                           loadingBuilder:

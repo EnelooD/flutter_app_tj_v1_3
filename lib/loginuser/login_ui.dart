@@ -10,12 +10,10 @@ class LoginUI extends StatefulWidget {
 }
 
 class _LoginUIState extends State<LoginUI> {
-
   TextEditingController userEmail = TextEditingController();
   TextEditingController userPassword = TextEditingController();
 
   @override
-
   bool showVisible = true;
 
   Future<void> showAlert(String msgTitle, String msgContent) {
@@ -77,7 +75,7 @@ class _LoginUIState extends State<LoginUI> {
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.brown),
+                          MaterialStateProperty.all<Color>(Colors.brown),
                     ),
                     child: Text(
                       'ตกลง',
@@ -157,11 +155,9 @@ class _LoginUIState extends State<LoginUI> {
             }),
           ),
         );
-      }
-      if (value[0].message == '2') {
+      } else if (value[0].message == '2') {
         showAlert('ผลการทำงาน', 'Username Password ไม่ถูกต้อง');
-      }
-      if (value[0].message == '3') {
+      } else {
         showAlert('คำเตือน', 'มีความผิดพลาดในการทำงานกรุณาลองใหม่อีกครั้ง');
       }
     });
@@ -294,7 +290,7 @@ class _LoginUIState extends State<LoginUI> {
                             MaterialStateProperty.all<Color>(Colors.brown),
                       ),
                       onPressed: () {
-                         _dismisskeyboard(context);
+                        _dismisskeyboard(context);
                         setState(() {
                           userPassword.text = '';
                           userEmail.text = '';
