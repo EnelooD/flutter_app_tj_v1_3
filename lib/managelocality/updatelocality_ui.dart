@@ -2,36 +2,44 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_app_tj_v1_3/managelocality/homemanage.dart';
 import 'package:flutter_app_tj_v1_3/services/api_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LocalityRegisterUI extends StatefulWidget {
+class UpDateLocality_UI extends StatefulWidget {
   @override
-  _LocalityRegisterUIState createState() => _LocalityRegisterUIState();
+  _UpDateLocality_UIState createState() => _UpDateLocality_UIState();
+
+  String locId;
+  String locName;
+  String locDetails;
+  String locImage;
+
+
+  UpDateLocality_UI(
+      {this.locId,
+        this.locName,
+        this.locDetails,
+        this.locImage});
+
 }
 
-class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
+class _UpDateLocality_UIState extends State<UpDateLocality_UI> {
   SharedPreferences sharedPreferences;
   String LoginId;
+
   TextEditingController locName; //= TextEditingController();
   TextEditingController locDetails; //= TextEditingController();
-  TextEditingController locPostalcode; //= TextEditingController();
   TextEditingController locImage; //= TextEditingController();
-  TextEditingController locLat; //= TextEditingController();
-  TextEditingController locLong; //= TextEditingController();
-  String userId;
-  String locStatus;
 
   //import 'dart:io';
   File _selectImage;
   String _selectImageBase64 = '';
   String _selectImageName = '';
 
-  @override
-  bool checkBoxValue = false;
+  final String URL =
+      "https://oomhen.000webhostapp.com/thaiandjourney_services/locality_services";
 
   _selectImageFromCamera() async {
     PickedFile pickedFile = await ImagePicker()
@@ -90,14 +98,6 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
             ],
           );
         });
-  }
-
-  _getUserId() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    setState(() {
-      LoginId = sharedPreferences.getString("LoginId");
-      userId = LoginId;
-    });
   }
 
   @override
@@ -160,7 +160,7 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.brown),
+                      MaterialStateProperty.all<Color>(Colors.brown),
                     ),
                     child: Text(
                       'ตกลง',
@@ -240,7 +240,7 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.brown),
+                      MaterialStateProperty.all<Color>(Colors.brown),
                     ),
                     child: Text(
                       'ตกลง',
@@ -253,18 +253,14 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => ManagePlaceUI()),
-                        (Route<dynamic> route) => false,
-                      );
-                      apiRegisterLocalityService(
-                        userId,
+                            (Route<dynamic> route) => false,
+                      );//.whenComplete(apigetLocalityManage(LoginId));
+                      apiUpdateLocalityService(
+                        widget.locId,
                         locName.text,
                         locDetails.text,
-                        locPostalcode.text,
-                        locStatus,
                         _selectImageName,
                         _selectImageBase64,
-                        locLat.text,
-                        locLong.text,
                       );
                     },
                   ),
@@ -274,7 +270,7 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
                   ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.brown),
+                      MaterialStateProperty.all<Color>(Colors.brown),
                     ),
                     child: Text(
                       'ยกเลิก',
@@ -300,34 +296,28 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
       showAlert('คำเตือน', 'ลืมป้อน locName หรือเปล่าจ๊ะ');
     } else if (locDetails.text.trim().length == 0) {
       showAlert('คำเตือน', 'locDetails');
-    } else if (locPostalcode.text.trim().length < 5) {
-      showAlert('คำเตือน', 'locPostalcode');
-    } else if (_selectImageName.length == 0) {
-      showAlert('คำเตือน', 'เลือกรูป');
-    } else if (locLat.text.trim().length == 0) {
-      showAlert('คำเตือน', 'locLat');
-    } else if (locLong.text.trim().length == 0) {
-      showAlert('คำเตือน', 'locLong');
-    } else if (checkBoxValue == false) {
-      showAlert('คำเตือน', 'checkBoxValue');
-    }else {
-      showAlertCreate("ยืนยัน", "ต้องการยืนยันการลงทะเบียน");
+    } else {
+      showAlertCreate("ยืนยัน", "ต้องการยืนยันการแก้ไข");
     }
+  }
+
+  _getUserId() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      LoginId = sharedPreferences.getString("LoginId");
+    });
   }
 
   void initState() {
     // TODO: implement initState
-    _getUserId();
-    locStatus = '1';
     locName = TextEditingController();
     locDetails = TextEditingController();
-    locPostalcode = TextEditingController();
     locImage = TextEditingController();
-    locLat = TextEditingController();
-    locLong = TextEditingController();
+    _getUserId();
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -346,7 +336,7 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
                   height: MediaQuery.of(context).size.width * 0.05,
                 ),
                 Text(
-                  'Create My Locality',
+                  'Edit My Locality',
                   style: TextStyle(
                     color: Colors.brown,
                     fontSize: 20,
@@ -379,7 +369,7 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: _selectImage == null
-                              ? AssetImage("assets/images/brown.jpg")
+                              ? NetworkImage('${URL}${widget.locImage}')
                               : FileImage(_selectImage),
                         ),
                       ),
@@ -421,7 +411,7 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
                         Icons.location_history,
                         color: Colors.brown,
                       ),
-                      hintText: 'Locality Name',
+                      hintText: widget.locName,
                     ),
                   ),
                 ),
@@ -432,11 +422,11 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
                   padding: const EdgeInsets.only(right: 60.0, left: 60.0),
                   child: TextFormField(
                     controller: locDetails,
-                    minLines: 1,
-                    maxLines: 4,
+                    minLines: 4,
+                    maxLines: 6,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
-                      hintText: 'Locality Details',
+                      hintText: widget.locDetails,
                       prefixIcon: Icon(
                         Icons.description_rounded,
                         color: Colors.brown,
@@ -447,143 +437,18 @@ class _LocalityRegisterUIState extends State<LocalityRegisterUI> {
                 SizedBox(
                   height: MediaQuery.of(context).size.width * 0.05,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 60.0,
-                    right: 60.0,
-                  ),
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp("[0-9]+"),
-                      ),
-                    ],
-                    controller: locPostalcode,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.email,
-                        color: Colors.brown,
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.brown),
-                      ),
-                      hintText: 'Locality Pastalcode',
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.width * 0.05,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 50.0,
-                    right: 50.0,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          controller: locLat,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.language_rounded,
-                              color: Colors.brown,
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.brown),
-                            ),
-                            hintText: 'Latitude',
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.05,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          controller: locLong,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.language_rounded,
-                              color: Colors.brown,
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.brown),
-                            ),
-                            hintText: 'Longitude',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.width * 0.05,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Checkbox(
-                        value: checkBoxValue,
-                        activeColor: Colors.brown,
-                        onChanged: (bool detailValue) {
-                          setState(() {
-                            checkBoxValue = detailValue;
-                          });
-                        }),
-                    GestureDetector(
-                      child: Text.rich(
-                        TextSpan(
-                          children: const <TextSpan>[
-                            TextSpan(
-                              text: 'I agree all statements ',
-                              style: TextStyle(
-                                color: Colors.brown,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'terms of service',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.brown,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/localityregister');
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.width * 0.05,
-                ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.2,
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.brown),
+                      MaterialStateProperty.all<Color>(Colors.brown),
                     ),
                     onPressed: () {
-                      // print('${userId}');
-                      // print('${locStatus}');
                       // print('${locName}');
                       // print('${locDetails}');
-                      // print('${locPostalcode}');
                       // print('${_selectImageName}');
                       // print('${_selectImageBase64}');
-                      // print('${locLat}');
-                      // print('${locLong}');
                       _checkCreate();
                     },
                     child: Text(

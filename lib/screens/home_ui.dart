@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_app_tj_v1_3/screens/dataillocality_ui.dart';
 import 'package:flutter_app_tj_v1_3/screens/drawer.dart';
@@ -13,7 +11,6 @@ class HomeUI extends StatefulWidget {
 }
 
 class _HomeUIState extends State<HomeUI> {
-  bool showFavorite = true;
 
   ProgressDialog progressDialog =
       ProgressDialog.getProgressDialog('Processing...', true);
@@ -27,7 +24,7 @@ class _HomeUIState extends State<HomeUI> {
   }
 
   _test() {
-    print('AAAAA');
+    print ("AAAAA");
   }
 
   @override
@@ -101,97 +98,71 @@ class _HomeUIState extends State<HomeUI> {
                   future: getallLocality(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return ListView.separated(
-                        separatorBuilder: (context, index) {
-                          return Divider(
-                            height: 0,
-                          );
-                        },
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * 0.40,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 10.0),
-                              child: Stack(
-                                children: [
-                                  Card(
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    elevation: 15,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) {
-                                              return DatailLocalityUI(
-                                                locId: snapshot.data[index].locId,
-                                                locName: snapshot.data[index].locName,
-                                                locDetails: snapshot.data[index].locDetails,
-                                                locImage: snapshot.data[index].locImage,
-                                                locPostalcode: snapshot.data[index].locPostalcode,
-                                                userName: snapshot.data[index].userName,
-                                                userEmail: snapshot.data[index].userEmail,
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        width: MediaQuery.of(context).size.height * 0.45,
-                                        height: MediaQuery.of(context).size.height * 0.3,
-                                        child: Image.network(
-                                          '${URL}${snapshot.data[index].locImage}',
-                                          loadingBuilder:
-                                              (context, child, progress) {
-                                            return progress == null
-                                                ? child
-                                                : LinearProgressIndicator(
-                                                    backgroundColor:
-                                                        Colors.brown,
-                                                  );
+                      if(snapshot.data[0].message == '2'){
+                        return Text('NOT DAS DATA');
+                      }else{
+                        return ListView.separated(
+                          separatorBuilder: (context, index) {
+                            return Divider(
+                              height: 0,
+                            );
+                          },
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * 0.40,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10.0, vertical: 10.0),
+                                child: Card(
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  elevation: 15,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return DatailLocalityUI(
+                                              locId: snapshot.data[index].locId,
+                                              locName: snapshot.data[index].locName,
+                                              locDetails: snapshot.data[index].locDetails,
+                                              locImage: snapshot.data[index].locImage,
+                                              locPostalcode: snapshot.data[index].locPostalcode,
+                                              userName: snapshot.data[index].userName,
+                                              userEmail: snapshot.data[index].userEmail,
+                                            );
                                           },
-                                          fit: BoxFit.cover,
                                         ),
+                                      );
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.height * 0.45,
+                                      height: MediaQuery.of(context).size.height * 0.3,
+                                      child: Image.network(
+                                        '${URL}${snapshot.data[index].locImage}',
+                                        loadingBuilder:
+                                            (context, child, progress) {
+                                          return progress == null
+                                              ? child
+                                              : LinearProgressIndicator(
+                                            backgroundColor:
+                                            Colors.brown,
+                                          );
+                                        },
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        IconButton(
-                                          onPressed: () {
-                                            if (showFavorite == true) {
-                                              setState(() {
-                                                showFavorite = false;
-                                              });
-                                            } else {
-                                              setState(() {
-                                                showFavorite = true;
-                                              });
-                                            }
-                                          },
-                                          icon: Icon(
-                                            showFavorite
-                                                ? Icons.favorite_outline
-                                                : Icons.favorite_outlined,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      );
+                            );
+                          },
+                        );
+                      }
                     } else if (snapshot.hasError) {
                       return Text("${snapshot.error}");
                     } else {

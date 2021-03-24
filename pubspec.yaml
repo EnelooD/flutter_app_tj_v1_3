@@ -33,6 +33,7 @@ dependencies:
   google_maps_flutter: ^1.2.0
   location: ^3.0.0
   image_picker: ^0.6.7
+  font_awesome_flutter: ^9.0.0
 
 dev_dependencies:
   flutter_test:

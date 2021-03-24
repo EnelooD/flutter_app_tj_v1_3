@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_tj_v1_3/screens/dataillocality_ui.dart';
 import 'package:flutter_app_tj_v1_3/screens/drawer.dart';
 import 'package:flutter_app_tj_v1_3/services/api_service.dart';
 import 'package:flutter_app_tj_v1_3/screens/progress_dialog.dart';
@@ -67,77 +68,78 @@ class _FavoriteUIState extends State<FavoriteUI> {
                 future: apigetLocalityFavorite(LoginId),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    return ListView.separated(
-                      separatorBuilder: (context, index) {
-                        return Divider(
-                          height: 0,
-                        );
-                      },
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          height:
-                          MediaQuery.of(context).size.height * 0.40,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 10.0),
-                            child: Stack(
-                              children: [
-                                Card(
-                                  clipBehavior:
-                                  Clip.antiAliasWithSaveLayer,
-                                  elevation: 15,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(20),
-                                  ),
-                                  child: InkWell(
-                                    onTap: () {
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) {
-                                      //       return DatailLocalityUI(
-                                      //         locId: snapshot.data[index].locId,
-                                      //         userId: snapshot.data[index].userId,
-                                      //         locName:
-                                      //         snapshot.data[index].locName,
-                                      //         locDetails:
-                                      //         snapshot.data[index].locDetails,
-                                      //         locImage:
-                                      //         snapshot.data[index].locImage,
-                                      //         locPostalcode: snapshot
-                                      //             .data[index].locPostalcode,
-                                      //       );
-                                      //     },
-                                      //   ),
-                                      // );
-                                    },
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.height * 0.45,
-                                      height: MediaQuery.of(context).size.height * 0.3,
-                                      child: Image.network(
-                                        '${URL}${snapshot.data[index].locImage}',
-                                        loadingBuilder:
-                                            (context, child, progress) {
-                                          return progress == null
-                                              ? child
-                                              : LinearProgressIndicator(
-                                            backgroundColor:
-                                            Colors.brown,
-                                          );
-                                        },
-                                        fit: BoxFit.cover,
+                    if(snapshot.data[0].message == '2'){
+                      return Text('NOT DAS DATA');
+                    }else{
+                      return ListView.separated(
+                        separatorBuilder: (context, index) {
+                          return Divider(
+                            height: 0,
+                          );
+                        },
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            height:
+                            MediaQuery.of(context).size.height * 0.40,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 10.0),
+                              child: Stack(
+                                children: [
+                                  Card(
+                                    clipBehavior:
+                                    Clip.antiAliasWithSaveLayer,
+                                    elevation: 15,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(20),
+                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return DatailLocalityUI(
+                                                locId: snapshot.data[index].locId,
+                                                locName: snapshot.data[index].locName,
+                                                locDetails: snapshot.data[index].locDetails,
+                                                locImage: snapshot.data[index].locImage,
+                                                locPostalcode: snapshot.data[index].locPostalcode,
+                                                userName: snapshot.data[index].userName,
+                                                userEmail: snapshot.data[index].userEmail,
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: MediaQuery.of(context).size.height * 0.45,
+                                        height: MediaQuery.of(context).size.height * 0.3,
+                                        child: Image.network(
+                                          '${URL}${snapshot.data[index].locImage}',
+                                          loadingBuilder:
+                                              (context, child, progress) {
+                                            return progress == null
+                                                ? child
+                                                : LinearProgressIndicator(
+                                              backgroundColor:
+                                              Colors.brown,
+                                            );
+                                          },
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    );
+                          );
+                        },
+                      );
+                    }
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   } else {

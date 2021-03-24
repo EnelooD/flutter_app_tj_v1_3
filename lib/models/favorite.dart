@@ -1,24 +1,27 @@
 class Favorite {
   String message;
-  String locId;
+  String favId;
   String userId;
+  String locId;
+  String favStatus;
 
-  Favorite(
-      {this.message,
-        this.locId,
-        this.userId});
+  Favorite({this.message, this.favId, this.userId, this.locId, this.favStatus});
 
   Favorite.fromJson(Map<String, dynamic> json) {
     message = json['message'];
-    locId = json['locId'];
+    favId = json['favId'];
     userId = json['userId'];
+    locId = json['locId'];
+    favStatus = json['favStatus'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['message'] = this.message;
-    data['locId'] = this.locId;
+    data['favId'] = this.favId;
     data['userId'] = this.userId;
+    data['locId'] = this.locId;
+    data['favStatus'] = this.favStatus;
     return data;
   }
 }

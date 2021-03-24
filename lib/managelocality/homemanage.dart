@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_tj_v1_3/managelocality/localityregister_ui.dart';
+import 'package:flutter_app_tj_v1_3/managelocality/updatelocality_ui.dart';
 import 'package:flutter_app_tj_v1_3/screens2_ui.dart';
 import 'package:flutter_app_tj_v1_3/services/api_service.dart';
 import 'package:flutter_app_tj_v1_3/utils/constants.dart';
@@ -186,25 +187,20 @@ class _ManagePlaceUIState extends State<ManagePlaceUI> {
                                     ),
                                     child: InkWell(
                                       onTap: () {
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) {
-                                        //       return DatailLocalityUI(
-                                        //         locId: snapshot.data[index].locId,
-                                        //         userId: snapshot.data[index].userId,
-                                        //         locName:
-                                        //         snapshot.data[index].locName,
-                                        //         locDetails:
-                                        //         snapshot.data[index].locDetails,
-                                        //         locImage:
-                                        //         snapshot.data[index].locImage,
-                                        //         locPostalcode: snapshot
-                                        //             .data[index].locPostalcode,
-                                        //       );
-                                        //     },
-                                        //   ),
-                                        // );
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return UpDateLocality_UI(
+                                                locId: snapshot.data[index].locId,
+                                                locName: snapshot.data[index].locName,
+                                                locDetails: snapshot.data[index].locDetails,
+                                                locImage: snapshot.data[index].locImage,
+
+                                              );
+                                            },
+                                          ),
+                                        );
                                       },
                                       child: Container(
                                         width: MediaQuery.of(context).size.height * 0.45,
