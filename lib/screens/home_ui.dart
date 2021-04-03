@@ -15,7 +15,7 @@ class _HomeUIState extends State<HomeUI> {
   ProgressDialog progressDialog =
       ProgressDialog.getProgressDialog('Processing...', true);
   final String URL =
-      "https://oomhen.000webhostapp.com/thaiandjourney_services/locality_services";
+      "https://oomhen.000webhostapp.com/thaiandjourney_services";
 
   @override
   void initState() {
@@ -24,7 +24,7 @@ class _HomeUIState extends State<HomeUI> {
   }
 
   _test() {
-    print ("AAAAA");
+    setState(() {});
   }
 
   @override
@@ -122,12 +122,14 @@ class _HomeUIState extends State<HomeUI> {
                                   ),
                                   child: InkWell(
                                     onTap: () {
+                                      print(snapshot.data[index].userId);
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) {
                                             return DatailLocalityUI(
                                               locId: snapshot.data[index].locId,
+                                              userId: snapshot.data[index].userId,
                                               locName: snapshot.data[index].locName,
                                               locDetails: snapshot.data[index].locDetails,
                                               locImage: snapshot.data[index].locImage,

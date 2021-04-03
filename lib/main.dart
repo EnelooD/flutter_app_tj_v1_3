@@ -5,15 +5,17 @@ import 'package:flutter_app_tj_v1_3/loginuser/register_ui.dart';
 import 'package:flutter_app_tj_v1_3/managelocality/homemanage.dart';
 import 'package:flutter_app_tj_v1_3/managelocality/localityregister_ui.dart';
 import 'package:flutter_app_tj_v1_3/screens/chat/chat_room_screen.dart';
+import 'package:flutter_app_tj_v1_3/screens2_ui.dart';
 import 'package:flutter_app_tj_v1_3/screens_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //1:018:00
-void main() {
+void main() async{
   runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginUI(),
-      routes: _route,
-    ),
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: LoginUI(),
+        routes: _route,
+      ),
   );
 }
 

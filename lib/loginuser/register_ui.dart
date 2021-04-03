@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app_tj_v1_3/loginuser/login_ui.dart';
 import 'package:flutter_app_tj_v1_3/services/api_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RegisterUI extends StatefulWidget {
   @override
@@ -13,6 +17,7 @@ class _RegisterUIState extends State<RegisterUI> {
   TextEditingController userEmail; //= TextEditingController();
   TextEditingController userPassword; //= TextEditingController();
   TextEditingController userConPassword; //= TextEditingController();
+  TextEditingController userImage; //= TextEditingController();
   String userStatus;
 
   @override
@@ -20,6 +25,10 @@ class _RegisterUIState extends State<RegisterUI> {
   bool showConpassword = true;
   bool checkBoxValue = false;
 
+  //import 'dart:io';
+  File _selectImage;
+  String _selectImageBase64 = '';
+  String _selectImageName = '';
 
   Future<void> showAlert(String msgTitle, String msgContent) {
     return showDialog<void>(
@@ -178,7 +187,8 @@ class _RegisterUIState extends State<RegisterUI> {
                         userName.text.trim(),
                         userEmail.text.trim(),
                         userPassword.text.trim(),
-                        userStatus,
+                        _selectImageName,
+                        _selectImageBase64,
                       );
                     },
                   ),
@@ -209,6 +219,65 @@ class _RegisterUIState extends State<RegisterUI> {
     );
   }
 
+  _selectImageFromCamera() async {
+    PickedFile pickedFile = await ImagePicker()
+        .getImage(source: ImageSource.camera, imageQuality: 75);
+
+    if (pickedFile == null) return;
+    setState(() {
+      _selectImage = File(pickedFile.path);
+      _selectImageBase64 = base64Encode(_selectImage.readAsBytesSync());
+      _selectImageName = _selectImage.path.split('/').last;
+    });
+  }
+
+  _selectImageFromGallery() async {
+    PickedFile pickedFile = await ImagePicker()
+        .getImage(source: ImageSource.gallery, imageQuality: 75);
+
+    if (pickedFile == null) return;
+    setState(() {
+      _selectImage = File(pickedFile.path);
+      _selectImageBase64 = base64Encode(_selectImage.readAsBytesSync());
+      _selectImageName = _selectImage.path.split('/').last;
+    });
+  }
+
+  _showSelectFromCamGal(context) async {
+    await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _selectImageFromCamera();
+                  },
+                  child: Icon(
+                    Icons.camera_alt,
+                    color: Colors.brown,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _selectImageFromGallery();
+                  },
+                  child: Icon(
+                    Icons.camera,
+                    color: Colors.brown,
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
   _checkCreate() async {
 
     if (userName.text.trim().length == 0) {
@@ -235,6 +304,7 @@ class _RegisterUIState extends State<RegisterUI> {
     userEmail = TextEditingController();
     userPassword = TextEditingController();
     userConPassword = TextEditingController();
+    userImage = TextEditingController();
 
     super.initState();
   }
@@ -262,7 +332,60 @@ class _RegisterUIState extends State<RegisterUI> {
                 ),
               ),
               SizedBox(
-                height: 45,
+                height: MediaQuery.of(context).size.width * 0.05,
+              ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 170,
+                    height: 170,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(
+                        width: 5,
+                        color: Colors.brown[400],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(80),
+                      color: Colors.brown,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: _selectImage == null
+                            ? AssetImage("assets/images/brown.jpg")
+                            : FileImage(_selectImage),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(80),
+                      //color: Colors.black,
+                    ),
+                    child: Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: IconButton(
+                        onPressed: () {
+                          _showSelectFromCamGal(context);
+                        },
+                        icon: Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.width * 0.05,
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 60.0, left: 60.0),

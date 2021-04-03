@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_tj_v1_3/models/chat_room_model.dart';
+
+import 'package:flutter_app_tj_v1_3/models/message.dart';
 
 class ChatBubble extends StatelessWidget {
   final bool isMe;
@@ -52,7 +53,7 @@ class ChatBubble extends StatelessWidget {
               maxWidth: MediaQuery.of(context).size.width * 0.65,
               minHeight: 30),
           child: Text(
-            message.text,
+            message.mgText,
             style: TextStyle(
               color: isMe
                   ? Colors.white
@@ -74,16 +75,16 @@ class ChatBubble extends StatelessWidget {
       isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          message.unread ? '1' : '',
+          message.mgStatus=='1' ? '' : 'อ่าน',
           style: TextStyle(
-            color: Colors.amber,
+            color: Colors.black,
             fontSize: 10,
           ),
         ),
         Text(
-          message.time,
+          message.mgModifyDate,
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black45,
             fontSize: 10,
           ),
         ),

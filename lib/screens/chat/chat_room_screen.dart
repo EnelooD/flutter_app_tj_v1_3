@@ -1,133 +1,223 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_tj_v1_3/models/chat_room_model.dart';
-import 'package:flutter_app_tj_v1_3/models/data.dart';
-import 'package:flutter_app_tj_v1_3/models/locality.dart';
-import 'package:flutter_app_tj_v1_3/models/message_model.dart';
-import 'package:flutter_app_tj_v1_3/screens/chat/chat_input.dart';
+import 'dart:async';
+
 import 'package:flutter_app_tj_v1_3/screens/chat/chat_item.dart';
-import 'package:flutter_app_tj_v1_3/utils/constants.dart';
+import 'package:flutter_app_tj_v1_3/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatRoomScreen extends StatefulWidget {
+  final roomId;
+  final userId;
+  final roomName;
+  final roomImage;
+
+  ChatRoomScreen({this.roomId, this.userId, this.roomName, this.roomImage});
+
   @override
   _ChatRoomScreenState createState() => _ChatRoomScreenState();
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  @override
-  final String URL = "https://oomhen.000webhostapp.com/thaiandjourney_services/locality_services";
-  Widget build(BuildContext context) {
-    ChatRoom chatRoom = ModalRoute.of(context).settings.arguments;
-    List<Message> messages = chatRoom.messages;
+  SharedPreferences sharedPreferences;
+  String LoginId;
+  TextEditingController mgText = TextEditingController();
+  StreamController _postsController;
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
+  int count = 1;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0.0,
-        centerTitle: true,
-        title: Row(
-          children: <Widget>[
-            CircleAvatar(
-              backgroundImage: NetworkImage(chatRoom.sender.imageUrl),
-              radius: 20.0,
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  chatRoom.sender.name,
-                  style: TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white
-                  ),
-                ),
-                Text(
-                  chatRoom.sender.message,
-                  style: TextStyle(
-                      fontSize: 10.0,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white
-                  ),
-                ),
-              ],
-            ),
-          ],
+  String saveStatusMessage;
+
+  loadPosts() async {
+    print('userIds ${LoginId}');
+    apigetMessageChat(widget.roomId).then((res) async {
+      _postsController.add(res);
+      return res;
+    });
+  }
+
+  showSnack() {
+    return scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text('New content loaded'),
+      ),
+    );
+  }
+
+  Future<Null> _handleRefresh() async {
+    count++;
+    print(count);
+    //api mgStatus จาก 1 ให้ เป็น 2
+    apigetMessageChat(widget.roomId).then((res) async {
+      _postsController.add(res);
+      showSnack();
+      return null;
+    });
+  }
+
+  @override
+  void initState() {
+    _postsController = new StreamController();
+    //api mgStatus จาก 1 ให้ เป็น 2
+    _getUserId();
+    loadPosts();
+    super.initState();
+  }
+
+  Future<Null> _getUserId() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    LoginId = sharedPreferences.getString("LoginId");
+    setState(() {});
+  }
+
+  messageInput() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      height: 70,
+      decoration: BoxDecoration(
+        color: Colors.brown,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25.0),
+          topRight: Radius.circular(25.0),
         ),
-        actions: <Widget>[
+      ),
+      child: Row(
+        children: [
           IconButton(
-            onPressed: (){},
-            icon: Icon(
-              Icons.more_horiz,
-              color: Colors.white,
+            icon: Icon(Icons.emoji_emotions),
+            iconSize: 25,
+            color: Colors.black,
+            onPressed: () {},
+          ),
+          Expanded(
+            child: TextField(
+              controller: mgText,
+              decoration: InputDecoration.collapsed(
+                hintText: 'Sand a message...',
+              ),
             ),
-          )
+          ),
+          IconButton(
+            icon: Icon(Icons.send),
+            iconSize: 25,
+            color: Colors.black,
+            onPressed: () {
+              print("${mgText}");
+              apiInsertMessageChat(
+                widget.roomId,
+                LoginId,
+                mgText.text.trim(),
+                "1",
+              );
+              _handleRefresh();
+              setState(() {
+                mgText.text = "";
+              });
+              FocusScope.of(context).unfocus();
+            },
+          ),
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.only(top: 80),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: Theme.of(context).brightness == Brightness.light
-                ? Constants.lightBGColors
-                : Constants.darkBGColors,
-          ),
-        ),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                alignment: Alignment.topCenter,
-                padding:
-                const EdgeInsets.only(left: 16.0, right: 16.0, top: 10),
-                child: SingleChildScrollView(
-                  reverse: true,
-                  child: Column(
-                    children: <Widget>[
-                      for (var index = 0; index < messages.length; index++)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: ChatItem(
-                              message: messages[index],
-                              isContinue: index == 0
-                                  ? false
-                                  : (messages[index - 1].sender ==
-                                  messages[index].sender) &&
-                                  (messages[index - 1].time ==
-                                      messages[index].time)),
-                        )
-                    ],
-                  ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: Colors.brown,
+        centerTitle: true,
+        title: Text('${widget.roomName}'),
+      ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Container(
+          child: Column(
+            children: [
+              Expanded(
+                child: StreamBuilder(
+                  stream: _postsController.stream,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    print('Has error: ${snapshot.hasError}');
+                    print('Has data: ${snapshot.hasData}');
+                    print('Snapshot Data ${snapshot.data}');
+                    if (snapshot.hasError) {
+                      return Text(snapshot.error);
+                    } else if (snapshot.hasData) {
+                      if(snapshot.data[0].message == '1'){
+                        return Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Scrollbar(
+                                child: RefreshIndicator(
+                                  onRefresh: _handleRefresh,
+                                  child: Container(
+                                    alignment: Alignment.topCenter,
+                                    padding: const EdgeInsets.only(
+                                        left: 16.0, right: 16.0, top: 10),
+                                    child: SingleChildScrollView(
+                                      physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                      reverse: true,
+                                      child: Column(
+                                        children: <Widget>[
+                                          for (var index = 0;
+                                          index < snapshot.data.length;
+                                          index++)
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  vertical: 10.0),
+                                              child: ChatItem(
+                                                  message: snapshot.data[index],
+                                                  image: widget.roomImage,
+                                                  isMe: snapshot
+                                                      .data[index].userId ==
+                                                      LoginId,
+                                                  isContinue: index == 0
+                                                      ? false
+                                                      : (snapshot.data[index - 1]
+                                                      .userId ==
+                                                      snapshot.data[index]
+                                                          .userId) &&
+                                                      (snapshot
+                                                          .data[index - 1]
+                                                          .mgModifyDate ==
+                                                          snapshot.data[index]
+                                                              .mgModifyDate)),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }else{
+                        snapshot.data[0].message = saveStatusMessage;
+                        print('${saveStatusMessage}');
+                        return Text('test');
+                      }
+                    } else if (snapshot.connectionState !=
+                        ConnectionState.done) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (!snapshot.hasData &&
+                        snapshot.connectionState == ConnectionState.done) {
+                      return Text('No Posts');
+                    } else {
+                      return Text('เกิดข้อผิดพาด');
+                    }
+                  },
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: ChatInput(
-                onPressed: (message) {
-                  if (message != null) {
-                    setState(() {
-                      messages.add(
-                        Message(
-                          sender: Data.me,
-                          text: message,
-                          time: '17:35',
-                          unread: true,
-                        ),
-                      );
-                    });
-                  }
-                },
-              ),
-            ),
-          ],
+              messageInput(),
+            ],
+          ),
         ),
       ),
     );

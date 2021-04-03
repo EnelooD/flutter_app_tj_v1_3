@@ -32,7 +32,7 @@ class _FavoriteUIState extends State<FavoriteUI> {
   ProgressDialog progressDialog =
       ProgressDialog.getProgressDialog('Processing...', true);
   final String URL =
-      "https://oomhen.000webhostapp.com/thaiandjourney_services/locality_services";
+      "https://oomhen.000webhostapp.com/thaiandjourney_services";
 
   @override
   Widget build(BuildContext context) {
@@ -62,91 +62,88 @@ class _FavoriteUIState extends State<FavoriteUI> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Center(
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.8,
-              child: FutureBuilder(
-                future: apigetLocalityFavorite(LoginId),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if(snapshot.data[0].message == '2'){
-                      return Text('NOT DAS DATA');
-                    }else{
-                      return ListView.separated(
-                        separatorBuilder: (context, index) {
-                          return Divider(
-                            height: 0,
-                          );
-                        },
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            height:
-                            MediaQuery.of(context).size.height * 0.40,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.0, vertical: 10.0),
-                              child: Stack(
-                                children: [
-                                  Card(
-                                    clipBehavior:
-                                    Clip.antiAliasWithSaveLayer,
-                                    elevation: 15,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                      BorderRadius.circular(20),
-                                    ),
-                                    child: InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) {
-                                              return DatailLocalityUI(
-                                                locId: snapshot.data[index].locId,
-                                                locName: snapshot.data[index].locName,
-                                                locDetails: snapshot.data[index].locDetails,
-                                                locImage: snapshot.data[index].locImage,
-                                                locPostalcode: snapshot.data[index].locPostalcode,
-                                                userName: snapshot.data[index].userName,
-                                                userEmail: snapshot.data[index].userEmail,
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        width: MediaQuery.of(context).size.height * 0.45,
-                                        height: MediaQuery.of(context).size.height * 0.3,
-                                        child: Image.network(
-                                          '${URL}${snapshot.data[index].locImage}',
-                                          loadingBuilder:
-                                              (context, child, progress) {
-                                            return progress == null
-                                                ? child
-                                                : LinearProgressIndicator(
-                                              backgroundColor:
-                                              Colors.brown,
+            child: FutureBuilder(
+              future: apigetLocalityFavorite(LoginId),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if(snapshot.data[0].message == '2'){
+                    return Text('NOT DAS DATA');
+                  }else{
+                    return ListView.separated(
+                      separatorBuilder: (context, index) {
+                        return Divider(
+                          height: 0,
+                        );
+                      },
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          height:
+                          MediaQuery.of(context).size.height * 0.40,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 10.0),
+                            child: Stack(
+                              children: [
+                                Card(
+                                  clipBehavior:
+                                  Clip.antiAliasWithSaveLayer,
+                                  elevation: 15,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(20),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return DatailLocalityUI(
+                                              locId: snapshot.data[index].locId,
+                                              locName: snapshot.data[index].locName,
+                                              locDetails: snapshot.data[index].locDetails,
+                                              locImage: snapshot.data[index].locImage,
+                                              locPostalcode: snapshot.data[index].locPostalcode,
+                                              userName: snapshot.data[index].userName,
+                                              userEmail: snapshot.data[index].userEmail,
                                             );
                                           },
-                                          fit: BoxFit.cover,
                                         ),
+                                      );
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.height * 0.45,
+                                      height: MediaQuery.of(context).size.height * 0.3,
+                                      child: Image.network(
+                                        '${URL}${snapshot.data[index].locImage}',
+                                        loadingBuilder:
+                                            (context, child, progress) {
+                                          return progress == null
+                                              ? child
+                                              : LinearProgressIndicator(
+                                            backgroundColor:
+                                            Colors.brown,
+                                          );
+                                        },
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      );
-                    }
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  } else {
-                    return progressDialog;
+                          ),
+                        );
+                      },
+                    );
                   }
-                },
-              ),
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                } else {
+                  return progressDialog;
+                }
+              },
             ),
           ),
         ),
