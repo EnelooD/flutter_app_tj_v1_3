@@ -1,6 +1,8 @@
 import 'package:flutter_app_tj_v1_3/models/favorite.dart';
 import 'package:flutter_app_tj_v1_3/models/locality.dart';
 import 'package:flutter_app_tj_v1_3/models/member.dart';
+import 'package:flutter_app_tj_v1_3/models/message.dart';
+import 'package:flutter_app_tj_v1_3/models/room.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -8,8 +10,7 @@ final String URL = "oomhen.000webhostapp.com";
 //oomhen.000webhostapp.com
 
 Future<List<Member>> apiLoginService(
-    String userEmail,
-    String userPassword) async {
+    String userEmail, String userPassword) async {
   Member member = Member(
     userEmail: userEmail,
     userPassword: userPassword,
@@ -27,12 +28,11 @@ Future<List<Member>> apiLoginService(
     //Map<String,String>.from(oldMap)
     print(response_data);
 
-      final Member_data = await response_data.map<Member>((json) {
-        return Member.fromJson(json);
-      }).toList();
+    final Member_data = await response_data.map<Member>((json) {
+      return Member.fromJson(json);
+    }).toList();
 
-      return Member_data;
-
+    return Member_data;
   } else {
     return null;
     //throw Exception('Failed to update a Task. Error: ${response.toString()}');
@@ -40,16 +40,14 @@ Future<List<Member>> apiLoginService(
 }
 
 //-----------------------------------------------------------------
-Future<String> apiRegisterService(
-    String userName,
-    String userEmail,
-    String userPassword,
-    String userStatus) async {
+Future<String> apiRegisterService(String userName, String userEmail,
+    String userPassword, String imageName, String userImage) async {
   Member member = Member(
       userName: userName,
       userEmail: userEmail,
       userPassword: userPassword,
-      userStatus: userStatus);
+      imageName: imageName,
+      userImage: userImage);
   //insertmember.php
   final response = await http.post(
     Uri.encodeFull(
@@ -130,12 +128,8 @@ Future<String> apiRegisterLocalityService(
 }
 
 //-----------------------------------------------------------------
-Future<String> apiUpdateLocalityService(
-    String locId,
-    String locName,
-    String locDetails,
-    String imageName,
-    String locImage) async {
+Future<String> apiUpdateLocalityService(String locId, String locName,
+    String locDetails, String imageName, String locImage) async {
   Locality locality = Locality(
       locId: locId,
       locName: locName,
@@ -144,7 +138,8 @@ Future<String> apiUpdateLocalityService(
       locImage: locImage);
 
   final response = await http.post(
-    Uri.encodeFull('https://${URL}/thaiandjourney_services/locality_services/updatelocality.php'),
+    Uri.encodeFull(
+        'https://${URL}/thaiandjourney_services/locality_services/updatelocality.php'),
     body: json.encode(locality.toJson()),
     headers: {"Content-Type": "application/json"},
   );
@@ -157,8 +152,7 @@ Future<String> apiUpdateLocalityService(
 }
 
 //-----------------------------------------------------------------
-Future<String> deletefriend(
-    String userId) async {
+Future<String> deletefriend(String userId) async {
   Member friend = Member(userId: userId);
 
   final response = await http.post(
@@ -175,8 +169,7 @@ Future<String> deletefriend(
 }
 
 //-----------------------------------------------------------------
-Future<List<Locality>> apigetLocalityManage(
-    String userId) async {
+Future<List<Locality>> apigetLocalityManage(String userId) async {
   Locality locality = Locality(
     userId: userId,
   );
@@ -206,8 +199,7 @@ Future<List<Locality>> apigetLocalityManage(
 }
 
 //-----------------------------------------------------------------
-Future<List<Locality>> apigetLocalityFavorite(
-    String userId) async {
+Future<List<Locality>> apigetLocalityFavorite(String userId) async {
   Locality locality = Locality(
     userId: userId,
   );
@@ -235,15 +227,11 @@ Future<List<Locality>> apigetLocalityFavorite(
 }
 
 //-----------------------------------------------------------------
-Future<List<Favorite>> apigetIconFavorite(
-    String userId,
-    String locId) async {
-
+Future<List<Favorite>> apigetIconFavorite(String userId, String locId) async {
   Favorite favorite = Favorite(
     userId: userId,
     locId: locId,
   );
-
 
   final response = await http.post(
     Uri.encodeFull(
@@ -268,15 +256,12 @@ Future<List<Favorite>> apigetIconFavorite(
 }
 
 //-----------------------------------------------------------------
-Future<String> apiUpdateFavorite(
-    String favId,
-    String favStatus) async {
-  Favorite favorite = Favorite(
-      favId: favId,
-      favStatus: favStatus);
+Future<String> apiUpdateFavorite(String favId, String favStatus) async {
+  Favorite favorite = Favorite(favId: favId, favStatus: favStatus);
 
   final response = await http.post(
-    Uri.encodeFull('https://${URL}/thaiandjourney_services/locality_services/favorite_services/updatefavorite.php'),
+    Uri.encodeFull(
+        'https://${URL}/thaiandjourney_services/locality_services/favorite_services/updatefavorite.php'),
     body: json.encode(favorite.toJson()),
     headers: {"Content-Type": "application/json"},
   );
@@ -290,13 +275,9 @@ Future<String> apiUpdateFavorite(
 
 //-----------------------------------------------------------------
 Future<String> apiInsertFavorite(
-    String userId,
-    String locId,
-    String favStatus) async {
-  Favorite favorite = Favorite(
-      userId: userId,
-      locId: locId,
-      favStatus: favStatus);
+    String userId, String locId, String favStatus) async {
+  Favorite favorite =
+      Favorite(userId: userId, locId: locId, favStatus: favStatus);
 
   //insertmember.php
   final response = await http.post(
@@ -311,5 +292,65 @@ Future<String> apiInsertFavorite(
     return response_data['message'];
   } else {
     throw Exception('Failed to update a Task. Error: ${response.toString()}');
+  }
+}
+
+//-----------------------------------------------------------------
+Future<List<Room>> apigetChatRoom(String userId) async {
+  Room room = Room(
+    userId: userId,
+  );
+
+  final response = await http.post(
+    Uri.encodeFull(
+        'https://${URL}/thaiandjourney_services/room_services/getchatroom.php'),
+    body: json.encode(room.toJson()),
+    headers: {"Content-Type": "application/json"},
+  );
+
+  if (response.statusCode == 200) {
+    //if (response.statusCode == HttpStatus.ok) {
+    //final response_data = json.decode(response.body); หรือ
+    final response_data = jsonDecode(response.body);
+    //print(response_data.toString());
+
+    final Room_data = await response_data.map<Room>((json) {
+      return Room.fromJson(json);
+    }).toList();
+
+    return Room_data;
+  } else {
+    //print(response.statusCode.toString());
+    throw Exception('Fail to load Todo from the Internet');
+  }
+}
+
+//-----------------------------------------------------------------
+Future<List<Message>> apigetMessageChat(String roomId) async {
+  Message message = Message(
+    roomId: roomId,
+  );
+
+  final response = await http.post(
+    Uri.encodeFull(
+        'https://${URL}/thaiandjourney_services/room_services/getmessagechat.php'),
+    body: json.encode(message.toJson()),
+    headers: {"Content-Type": "application/json"},
+  );
+
+  if (response.statusCode == 200) {
+    //if (response.statusCode == HttpStatus.ok) {
+    //final response_data = json.decode(response.body); หรือ
+    final response_data = jsonDecode(response.body);
+    //print(response_data.toString());
+
+    final Message_data = await response_data.map<Message>((json) {
+      return Message.fromJson(json);
+    }).toList();
+
+    return Message_data;
+  } else {
+    //print(response.statusCode.toString());
+    throw Exception('Fail to load Todo from the Internet');
   }
 }

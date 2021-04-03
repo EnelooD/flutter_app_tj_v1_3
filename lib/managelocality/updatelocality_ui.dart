@@ -38,8 +38,9 @@ class _UpDateLocality_UIState extends State<UpDateLocality_UI> {
   String _selectImageBase64 = '';
   String _selectImageName = '';
 
+
   final String URL =
-      "https://oomhen.000webhostapp.com/thaiandjourney_services/locality_services";
+      "https://oomhen.000webhostapp.com/thaiandjourney_services";
 
   _selectImageFromCamera() async {
     PickedFile pickedFile = await ImagePicker()
@@ -249,12 +250,8 @@ class _UpDateLocality_UIState extends State<UpDateLocality_UI> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ManagePlaceUI()),
-                            (Route<dynamic> route) => false,
-                      );//.whenComplete(apigetLocalityManage(LoginId));
+                      Route route = MaterialPageRoute(builder: (context) => ManagePlaceUI());
+                      Navigator.push(context, route).then(onGoBack);
                       apiUpdateLocalityService(
                         widget.locId,
                         locName.text,
@@ -468,5 +465,10 @@ class _UpDateLocality_UIState extends State<UpDateLocality_UI> {
         ),
       ),
     );
+  }
+
+  onGoBack(dynamic value) {
+    apigetLocalityManage(LoginId);
+    setState(() {});
   }
 }

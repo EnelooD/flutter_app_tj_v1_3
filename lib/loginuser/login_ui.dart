@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_tj_v1_3/screens2_ui.dart';
-import 'package:flutter_app_tj_v1_3/screens_ui.dart';
 import 'package:flutter_app_tj_v1_3/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

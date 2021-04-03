@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app_tj_v1_3/models/message.dart';
 import 'package:flutter_app_tj_v1_3/utils/constants.dart';
 
 
 class ChatInput extends StatefulWidget {
   final Function onPressed;
-
   ChatInput({this.onPressed});
 
   @override
@@ -12,11 +12,11 @@ class ChatInput extends StatefulWidget {
 }
 
 class _ChatInputState extends State<ChatInput> {
+  TextEditingController mgText = TextEditingController();
   TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    String message;
 
     return Container(
       decoration: BoxDecoration(
@@ -62,8 +62,8 @@ class _ChatInputState extends State<ChatInput> {
                 focusedErrorBorder: Constants.border,
                 focusedBorder: Constants.border,
               ),
-              onChanged: (v) {
-                message = v;
+              onChanged: (mgText) {
+                mgText = mgText;
               },
             ),
           ),
@@ -72,7 +72,7 @@ class _ChatInputState extends State<ChatInput> {
             child: RawMaterialButton(
               onPressed: () {
                 setState(() {
-                  widget.onPressed(message);
+                  widget.onPressed(mgText);
                   _controller.text = '';
                 });
               },

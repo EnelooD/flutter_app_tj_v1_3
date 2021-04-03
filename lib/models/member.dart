@@ -4,7 +4,8 @@ class Member {
   String userName;
   String userEmail;
   String userPassword;
-  String userStatus;
+  String userImage;
+  String imageName;
 
   Member(
       {this.message,
@@ -12,7 +13,8 @@ class Member {
         this.userName,
         this.userEmail,
         this.userPassword,
-        this.userStatus,
+        this.userImage,
+        this.imageName
       });
 
   Member.fromJson(Map<String, dynamic> json) {
@@ -21,7 +23,8 @@ class Member {
     userName = json['userName'];
     userEmail = json['userEmail'];
     userPassword = json['userPassword'];
-    userStatus = json['userStatus'];
+    userImage = json['userImage'];
+    imageName = json['imageName'];
   }
 
   Map<String, dynamic> toJson() {
@@ -31,42 +34,43 @@ class Member {
     data['userName'] = this.userName;
     data['userEmail'] = this.userEmail;
     data['userPassword'] = this.userPassword;
-    data['userStatus'] = this.userStatus;
+    data['userImage'] = this.userImage;
+    data['imageName'] = this.imageName;
     return data;
   }
 }
 
-class Membermem {
-
-  String memId;
-  String memName;
-  String memUsername;
-  String memPassword;
-  String memStatus;
-
-  Membermem(
-      {this.memId,
-        this.memName,
-        this.memUsername,
-        this.memPassword,
-        this.memStatus,
-      });
-
-  Membermem.fromJson(Map<String, dynamic> json) {
-    memId = json['memId'];
-    memName = json['memName'];
-    memUsername = json['memUsername'];
-    memPassword = json['memPassword'];
-    memStatus = json['memStatus'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['memId'] = this.memId;
-    data['memName'] = this.memName;
-    data['memUsername'] = this.memUsername;
-    data['memPassword'] = this.memPassword;
-    data['memStatus'] = this.memStatus;
-    return data;
-  }
-}
+// class Membermem {
+//
+//   String memId;
+//   String memName;
+//   String memUsername;
+//   String memPassword;
+//   String memStatus;
+//
+//   Membermem(
+//       {this.memId,
+//         this.memName,
+//         this.memUsername,
+//         this.memPassword,
+//         this.memStatus,
+//       });
+//
+//   Membermem.fromJson(Map<String, dynamic> json) {
+//     memId = json['memId'];
+//     memName = json['memName'];
+//     memUsername = json['memUsername'];
+//     memPassword = json['memPassword'];
+//     memStatus = json['memStatus'];
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     data['memId'] = this.memId;
+//     data['memName'] = this.memName;
+//     data['memUsername'] = this.memUsername;
+//     data['memPassword'] = this.memPassword;
+//     data['memStatus'] = this.memStatus;
+//     return data;
+//   }
+// }

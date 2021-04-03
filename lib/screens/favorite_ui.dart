@@ -32,7 +32,7 @@ class _FavoriteUIState extends State<FavoriteUI> {
   ProgressDialog progressDialog =
       ProgressDialog.getProgressDialog('Processing...', true);
   final String URL =
-      "https://oomhen.000webhostapp.com/thaiandjourney_services/locality_services";
+      "https://oomhen.000webhostapp.com/thaiandjourney_services";
 
   @override
   Widget build(BuildContext context) {

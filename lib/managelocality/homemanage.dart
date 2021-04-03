@@ -19,7 +19,7 @@ class _ManagePlaceUIState extends State<ManagePlaceUI> {
   ProgressDialog progressDialog =
       ProgressDialog.getProgressDialog('Processing...', true);
   final String URL =
-      "https://oomhen.000webhostapp.com/thaiandjourney_services/locality_services";
+      "https://oomhen.000webhostapp.com/thaiandjourney_services";
 
   _getUserId() async {
     sharedPreferences = await SharedPreferences.getInstance();
