@@ -5,7 +5,7 @@
         android:icon="@mipmap/launcher_icon"
         android:requestLegacyExternalStorage="true">
         <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyDM8tA56fxRFu1Dvu9unJx2Os42CyFZyVk"/>
+           android:value="AIzaSyDGBXzJLxqIUb5_dvq7NWLQDX0qeHs6GQI"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

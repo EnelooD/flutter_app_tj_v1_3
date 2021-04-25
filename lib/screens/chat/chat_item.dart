@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_app_tj_v1_3/models/message.dart';
+
+
 import 'package:flutter_app_tj_v1_3/screens/chat/chat_bubble.dart';
 
 class ChatItem extends StatelessWidget {

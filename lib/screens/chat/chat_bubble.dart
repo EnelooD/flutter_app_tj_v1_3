@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_app_tj_v1_3/models/message.dart';
+import 'package:flutter_app_tj_v1_3/services/api_service.dart';
 
 class ChatBubble extends StatelessWidget {
   final bool isMe;
@@ -12,6 +13,10 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print('message.mgId ${message.mgId}');
+    if(!isMe){
+      apiUpdateMessage(message.mgId);
+    }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[

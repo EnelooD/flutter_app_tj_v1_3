@@ -64,6 +64,7 @@ class _DrawerAomState extends State<DrawerAom> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.max,
                         children: [
+                          //Text(LoginId==null?'':LoginId),
                           Text(LoginEmail==null?'':LoginEmail),
                           Text(LoginName==null?'':LoginName),
                         ],

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_tj_v1_3/screens/chat/chat_room_screen.dart';
-import 'package:flutter_app_tj_v1_3/screens/drawer.dart';
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:flutter_app_tj_v1_3/screens/progress_dialog.dart';
+import 'package:flutter_app_tj_v1_3/screens/drawer.dart';
+import 'package:flutter_app_tj_v1_3/screens/chat/chat_room_screen.dart';
 import 'package:flutter_app_tj_v1_3/services/api_service.dart';
 import 'package:flutter_app_tj_v1_3/utils/constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class InboxUI extends StatefulWidget {
   @override
@@ -12,47 +14,76 @@ class InboxUI extends StatefulWidget {
 }
 
 class _InboxUIState extends State<InboxUI> {
+  final searchName = TextEditingController();
+
   SharedPreferences sharedPreferences;
   String LoginId;
-  String _messageText, _messageDate;
 
+  StreamController _postsController;
+  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   final String URL = "https://oomhen.000webhostapp.com/thaiandjourney_services";
+  int count = 1;
 
   ProgressDialog progressDialog =
       ProgressDialog.getProgressDialog('Processing...', true);
-
-  _test(String roomId) async {
-    await apigetMessageChat(roomId).then((value) {
-      if (value[0].message == '1') {
-        setState(() {
-          _messageText = value.last.mgText;
-          _messageDate = value.last.mgModifyDate;
-          print(value.last.mgText);
-          print(_messageText);
-          print(value.last.mgModifyDate);
-          print(_messageDate);
-          return;
-        });
-      }
-    });
-  }
 
   _getUserId() async {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       LoginId = sharedPreferences.getString("LoginId");
+      loadPosts();
+    });
+  }
+
+  loadPosts() async {
+    apigetChatRoom(LoginId).then((res) async {
+      _postsController.add(res);
+      return res;
+    });
+  }
+
+  showSnack() {
+    return scaffoldKey.currentState.showSnackBar(
+      SnackBar(
+        content: Text('New content loaded'),
+      ),
+    );
+  }
+
+  Future<Null> _handleRefresh() async {
+    count++;
+    print(count);
+    apigetChatRoom(LoginId).then((res) async {
+      _postsController.add(res);
+      showSnack();
+      return null;
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     _getUserId();
+    _postsController = new StreamController();
+    searchName.addListener(_printLatestValue);
     super.initState();
+  }
+
+  _printLatestValue() {
+    print("Second text field: ${searchName.text}");
+    if (searchName.text == '') {
+      setState(() {
+        return searchName.text == '';
+      });
+    } else {
+      setState(() {
+        return searchName.text == searchName.text;
+      });
+    }
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       extendBodyBehindAppBar: true,
       drawer: DrawerAom(),
       appBar: AppBar(
@@ -76,136 +107,186 @@ class _InboxUIState extends State<InboxUI> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: <Widget>[
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(vertical: 10),
-              //   child: TextFormField(
-              //     autofocus: false,
-              //     onChanged: (v) {},
-              //     decoration: InputDecoration(
-              //       focusColor: Colors.white,
-              //       prefixIcon: Icon(
-              //         Icons.search,
-              //         color: Colors.grey,
-              //       ),
-              //       hintText: 'Search',
-              //       hintStyle: TextStyle(
-              //         color: Colors.grey,
-              //       ),
-              //       filled: true,
-              //       fillColor: Colors.white,
-              //       enabledBorder: Constants.border,
-              //       disabledBorder: Constants.border,
-              //       border: Constants.border,
-              //       errorBorder: Constants.border,
-              //       focusedErrorBorder: Constants.border,
-              //       focusedBorder: Constants.border,
-              //     ),
-              //   ),
-              // ),
-              Container(
+              Expanded(
+                flex: 1,
                 child: Container(
                   child: Center(
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.brown),
+                    child: TextFormField(
+                      autofocus: false,
+                      controller: searchName,
+                      decoration: InputDecoration(
+                        focusColor: Colors.white,
+                        prefixIcon: IconButton(
+                          onPressed: () {
+                            apiSearchRoom(
+                              LoginId,
+                              searchName.text,
+                            ).then((value) {
+                              FocusScope.of(context).unfocus();
+                              if (value[0].message == '2') {
+                                return null;
+                              } else {
+                                return Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return ChatRoomScreen(
+                                        roomId: value[0].roomId,
+                                        roomName: value[0].roomName,
+                                        roomImage: value[0].roomImage,
+                                      );
+                                    },
+                                  ),
+                                );
+                              }
+                            });
+                          },
+                          icon: Icon(
+                            Icons.search,
+                            color: Colors.grey,
+                          ),
                         ),
-                        onPressed: () {
-                          // Navigator.pushNamed(context, '/screen/detail_ui');
-                          //_test("1");
-                        },
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.search,
-                              color: Colors.white,
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Text(
-                              'Search',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
+                        hintText: 'Search',
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        enabledBorder: Constants.border,
+                        disabledBorder: Constants.border,
+                        border: Constants.border,
+                        errorBorder: Constants.border,
+                        focusedErrorBorder: Constants.border,
+                        focusedBorder: Constants.border,
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            FocusScope.of(context).unfocus();
+                            if (searchName.text != '') {
+                              return searchName.text = '';
+                            }
+                          },
+                          icon: Icon(
+                            searchName.text == ''
+                                ? null
+                                : Icons.remove_circle_outlined,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.7,
-                child: FutureBuilder(
-                  future: apigetChatRoom(LoginId),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      if(snapshot.data[0].message == '2'){
-                        return Text('APP FRIEND');
-                      }else{
-                        return ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 80),
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return ChatRoomScreen(
-                                          roomId: snapshot.data[index].roomId,
-                                          roomName: snapshot.data[index].roomName,
-                                          roomImage: snapshot.data[index].roomImage,
-                                        );
-                                      },
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                  child: Row(
+              Expanded(
+                flex: 5,
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: StreamBuilder(
+                          stream: _postsController.stream,
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            print('Has error: ${snapshot.hasError}');
+                            print('Has data: ${snapshot.hasData}');
+                            print('Snapshot Data ${snapshot.data}');
+                            if (snapshot.hasError) {
+                              return Text(snapshot.error);
+                            } else if (snapshot.hasData) {
+                              if(snapshot.data[0].message=="1"){
+                                return GestureDetector(
+                                  onTap: () {
+                                    FocusScope.of(context).unfocus();
+                                  },
+                                  child: Column(
                                     children: <Widget>[
-                                      CircleAvatar(
-                                        backgroundImage: NetworkImage('${URL}${snapshot.data[index].roomImage}'),
-                                        radius: 30.0,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            snapshot.data[index].roomName,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16.0,
-                                            ),
-                                          ),
-                                        ],
+                                      Expanded(
+                                        child: ListView.builder(
+                                          padding:
+                                          const EdgeInsets.only(bottom: 80),
+                                          itemCount: snapshot.data.length,
+                                          itemBuilder: (context, index) {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) {
+                                                      return ChatRoomScreen(
+                                                        roomId: snapshot
+                                                            .data[index].roomId,
+                                                        roomName: snapshot
+                                                            .data[index].roomName,
+                                                        roomImage: snapshot
+                                                            .data[index]
+                                                            .roomImage,
+                                                      );
+                                                    },
+                                                  ),
+                                                );
+                                              },
+                                              child: Container(
+                                                padding:
+                                                const EdgeInsets.symmetric(
+                                                    vertical: 10.0),
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    CircleAvatar(
+                                                      backgroundImage: NetworkImage(
+                                                          '${URL}${snapshot.data[index].roomImage}'),
+                                                      radius: 30.0,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                      children: <Widget>[
+                                                        Text(
+                                                          snapshot.data[index]
+                                                              .roomName,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                            fontSize: 16.0,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ),
-                            );
+                                );
+                              }else{
+                                return Container();
+                              }
+                            } else if (snapshot.connectionState !=
+                                ConnectionState.done) {
+                              return progressDialog;
+                            } else if (!snapshot.hasData &&
+                                snapshot.connectionState ==
+                                    ConnectionState.done) {
+                              return Text('No Posts');
+                            } else {
+                              return Text('เกิดข้อผิดพาด');
+                            }
                           },
-                        );
-                      }
-                    } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    } else {
-                      return progressDialog;
-                    }
-                  },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

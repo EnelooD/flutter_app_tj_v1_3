@@ -19,15 +19,14 @@ class DatailLocalityUI extends StatefulWidget {
   String userName;
   String userEmail;
 
-  DatailLocalityUI(
-      {this.locId,
-      this.userId,
-      this.locName,
-      this.locDetails,
-      this.locImage,
-      this.locPostalcode,
-      this.userName,
-      this.userEmail});
+  DatailLocalityUI({this.locId,
+    this.userId,
+    this.locName,
+    this.locDetails,
+    this.locImage,
+    this.locPostalcode,
+    this.userName,
+    this.userEmail});
 }
 
 class _DatailLocalityUIState extends State<DatailLocalityUI> {
@@ -37,10 +36,9 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
   String showIconFavorite;
 
   ProgressDialog progressDialog =
-      ProgressDialog.getProgressDialog('กำลังประมวลผล...', false);
+  ProgressDialog.getProgressDialog('กำลังประมวลผล...', false);
 
-  final String URL =
-      "https://oomhen.000webhostapp.com/thaiandjourney_services";
+  final String URL = "https://oomhen.000webhostapp.com/thaiandjourney_services";
 
   _getUserId() async {
     sharedPreferences = await SharedPreferences.getInstance();
@@ -62,7 +60,7 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
 
   @override
   Widget build(BuildContext context) {
-    if(widget.userId==LoginId){
+    if (LoginId == widget.userId) {
       return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
@@ -76,8 +74,9 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
               Icons.arrow_back,
             ),
             onPressed: () {
-              Route route = MaterialPageRoute(builder: (context) => Screens2UI());
-              Navigator.push(context, route);
+              Route route =
+              MaterialPageRoute(builder: (context) => Screens2UI());
+              Navigator.push(context, route).then(onGoBack);
             },
           ),
         ),
@@ -87,7 +86,9 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: Theme.of(context).brightness == Brightness.light
+              colors: Theme
+                  .of(context)
+                  .brightness == Brightness.light
                   ? Constants.lightBGColors
                   : Constants.darkBGColors,
             ),
@@ -107,8 +108,14 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                 bottomLeft: Radius.circular(30),
                                 bottomRight: Radius.circular(30)),
                             child: Container(
-                              width: MediaQuery.of(context).size.height * 1,
-                              height: MediaQuery.of(context).size.height * 0.35,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height * 1,
+                              height: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height * 0.35,
                               child: Image.network(
                                 '${URL}${widget.locImage}',
                                 loadingBuilder: (context, child, progress) {
@@ -161,7 +168,8 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                           if (snapshot.hasData) {
                                             showIconFavorite =
                                                 snapshot.data[0].favStatus;
-                                            if (snapshot.data[0].message == "2") {
+                                            if (snapshot.data[0].message ==
+                                                "2") {
                                               showIconFavorite = "3";
                                               return Container(
                                                 child: Column(
@@ -198,7 +206,8 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                                                     .favId,
                                                                 "2")
                                                                 .then((value) {
-                                                              if (value == "1") {
+                                                              if (value ==
+                                                                  "1") {
                                                                 setState(() {
                                                                   showIconFavorite =
                                                                   "2";
@@ -217,7 +226,8 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                                                     .favId,
                                                                 "1")
                                                                 .then((value) {
-                                                              if (value == "1") {
+                                                              if (value ==
+                                                                  "1") {
                                                                 setState(() {
                                                                   showIconFavorite =
                                                                   "1";
@@ -259,7 +269,8 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                                             .favStatus ==
                                                             "1") {
                                                           apiUpdateFavorite(
-                                                              snapshot.data[0]
+                                                              snapshot
+                                                                  .data[0]
                                                                   .favId,
                                                               "2")
                                                               .then((value) {
@@ -277,7 +288,8 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                                           });
                                                         } else {
                                                           apiUpdateFavorite(
-                                                              snapshot.data[0]
+                                                              snapshot
+                                                                  .data[0]
                                                                   .favId,
                                                               "1")
                                                               .then((value) {
@@ -320,7 +332,11 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                 Container(
                                   alignment: Alignment.topLeft,
                                   color: Colors.brown[300],
-                                  height: MediaQuery.of(context).size.width * 0.5,
+                                  height:
+                                  MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width * 0.5,
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 20.0,
@@ -343,7 +359,9 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                       vertical: 10.0,
                                     ),
                                     child: Text(
-                                      'userName:${widget.userName}, userEmail:${widget.userEmail}',
+                                      'userName:${widget
+                                          .userName}, userEmail:${widget
+                                          .userEmail}',
                                       style: TextStyle(
                                         color: Colors.white,
                                       ),
@@ -367,7 +385,7 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
           ),
         ),
       );
-    }else{
+    } else {
       return Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
@@ -381,31 +399,64 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
               Icons.arrow_back,
             ),
             onPressed: () {
-              Route route = MaterialPageRoute(builder: (context) => Screens2UI());
-              Navigator.push(context, route);
+              Route route =
+              MaterialPageRoute(builder: (context) => Screens2UI());
+              Navigator.push(context, route).then(onGoBack);
             },
           ),
-          actions: [
+          actions: <Widget>[
             SizedBox(
-              width: 80,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width * 0.2,
               child: ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
-                  MaterialStateProperty.all<Color>(Colors.black87),
+                  MaterialStateProperty.all<Color>(Colors.black),
                 ),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return ChatRoomScreen(
-                          userId: widget.userId,
-                          roomName: widget.locName,
-                          roomImage: widget.locImage,
-                        );
-                      },
-                    ),
-                  );
+                  apigetRoomId(LoginId, widget.userId).then((value) {
+                    if (value[0].message=='2') {
+                      print("message ${value[0].message}");
+                      print("roomid ''");
+                      print("roomName ${widget.locName}");
+                      print("roomImage ${widget.locImage}");
+                      print("userId ${widget.userId}");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return ChatRoomScreen(
+                                roomId: '',
+                                roomName: widget.locName,
+                                roomImage: widget.locImage,
+                                userId: widget.userId
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    else {
+                      print("message ${value[0].message}");
+                      print("roomid ${value[0].roomId}");
+                      print("roomName ${value[0].roomName}");
+                      print("roomImage ${value[0].roomImage}");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return ChatRoomScreen(
+                                roomId: value[0].roomId!=null ?value[0].roomId :"",
+                                roomName: value[0].roomName!=null ?value[0].roomName :"",
+                                roomImage: value[0].roomImage!=null ?value[0].roomImage :"",
+                                userId: ""
+                            );
+                          },
+                        ),
+                      );
+                    }
+                  });
                 },
                 child: Text(
                   'Chat',
@@ -423,7 +474,9 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: Theme.of(context).brightness == Brightness.light
+              colors: Theme
+                  .of(context)
+                  .brightness == Brightness.light
                   ? Constants.lightBGColors
                   : Constants.darkBGColors,
             ),
@@ -443,8 +496,14 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                 bottomLeft: Radius.circular(30),
                                 bottomRight: Radius.circular(30)),
                             child: Container(
-                              width: MediaQuery.of(context).size.height * 1,
-                              height: MediaQuery.of(context).size.height * 0.35,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height * 1,
+                              height: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height * 0.35,
                               child: Image.network(
                                 '${URL}${widget.locImage}',
                                 loadingBuilder: (context, child, progress) {
@@ -495,8 +554,10 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                             LoginId, widget.locId),
                                         builder: (context, snapshot) {
                                           if (snapshot.hasData) {
-                                            showIconFavorite = snapshot.data[0].favStatus;
-                                            if (snapshot.data[0].message == "2") {
+                                            showIconFavorite =
+                                                snapshot.data[0].favStatus;
+                                            if (snapshot.data[0].message ==
+                                                "2") {
                                               showIconFavorite = "3";
                                               return Container(
                                                 child: Column(
@@ -505,8 +566,12 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                                   children: [
                                                     IconButton(
                                                       onPressed: () {
-                                                        if (showIconFavorite == "3") {
-                                                          apiInsertFavorite(LoginId, widget.locId, "2")
+                                                        if (showIconFavorite ==
+                                                            "3") {
+                                                          apiInsertFavorite(
+                                                              LoginId,
+                                                              widget.locId,
+                                                              "2")
                                                               .then((value) {
                                                             if (value == "1") {
                                                               setState(() {
@@ -529,7 +594,8 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                                                     .favId,
                                                                 "2")
                                                                 .then((value) {
-                                                              if (value == "1") {
+                                                              if (value ==
+                                                                  "1") {
                                                                 setState(() {
                                                                   showIconFavorite =
                                                                   "2";
@@ -548,7 +614,8 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                                                     .favId,
                                                                 "1")
                                                                 .then((value) {
-                                                              if (value == "1") {
+                                                              if (value ==
+                                                                  "1") {
                                                                 setState(() {
                                                                   showIconFavorite =
                                                                   "1";
@@ -586,29 +653,43 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                                   children: [
                                                     IconButton(
                                                       onPressed: () {
-                                                        if (snapshot.data[0].favStatus == "1") {
+                                                        if (snapshot.data[0]
+                                                            .favStatus ==
+                                                            "1") {
                                                           apiUpdateFavorite(
-                                                              snapshot.data[0].favId, "2").then((value) {
+                                                              snapshot
+                                                                  .data[0]
+                                                                  .favId,
+                                                              "2")
+                                                              .then((value) {
                                                             if (value == "1") {
                                                               setState(() {
-                                                                showIconFavorite = "2";
+                                                                showIconFavorite =
+                                                                "2";
                                                               });
                                                             } else {
                                                               setState(() {
-                                                                showIconFavorite = "1";
+                                                                showIconFavorite =
+                                                                "1";
                                                               });
                                                             }
                                                           });
                                                         } else {
                                                           apiUpdateFavorite(
-                                                              snapshot.data[0].favId, "1").then((value) {
+                                                              snapshot
+                                                                  .data[0]
+                                                                  .favId,
+                                                              "1")
+                                                              .then((value) {
                                                             if (value == "1") {
                                                               setState(() {
-                                                                showIconFavorite = "1";
+                                                                showIconFavorite =
+                                                                "1";
                                                               });
                                                             } else {
                                                               setState(() {
-                                                                showIconFavorite = "2";
+                                                                showIconFavorite =
+                                                                "2";
                                                               });
                                                             }
                                                           });
@@ -626,7 +707,8 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                                 ),
                                               );
                                             }
-                                          } else if (snapshot.hasError) {
+                                          }
+                                          else if (snapshot.hasError) {
                                             return Text("${snapshot.error}");
                                           } else {
                                             return progressDialog;
@@ -639,7 +721,11 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                 Container(
                                   alignment: Alignment.topLeft,
                                   color: Colors.brown[300],
-                                  height: MediaQuery.of(context).size.width * 0.5,
+                                  height:
+                                  MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width * 0.5,
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 20.0,
@@ -662,7 +748,9 @@ class _DatailLocalityUIState extends State<DatailLocalityUI> {
                                       vertical: 10.0,
                                     ),
                                     child: Text(
-                                      'userName:${widget.userName}, userEmail:${widget.userEmail}',
+                                      'userName:${widget
+                                          .userName}, userEmail:${widget
+                                          .userEmail}',
                                       style: TextStyle(
                                         color: Colors.white,
                                       ),

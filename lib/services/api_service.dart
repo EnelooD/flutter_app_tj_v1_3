@@ -277,7 +277,7 @@ Future<String> apiUpdateFavorite(String favId, String favStatus) async {
 Future<String> apiInsertFavorite(
     String userId, String locId, String favStatus) async {
   Favorite favorite =
-      Favorite(userId: userId, locId: locId, favStatus: favStatus);
+  Favorite(userId: userId, locId: locId, favStatus: favStatus);
 
   //insertmember.php
   final response = await http.post(
@@ -326,6 +326,67 @@ Future<List<Room>> apigetChatRoom(String userId) async {
 }
 
 //-----------------------------------------------------------------
+Future<List<Room>> apigetRoomId(
+    String userLogin, String userId) async {
+  Room room =
+  Room(userLogin: userLogin, userId: userId);
+
+  //insertmember.php
+  final response = await http.post(
+    Uri.encodeFull(
+        'https://${URL}/thaiandjourney_services/room_services/checkchatroom.php'),
+    body: json.encode(room.toJson()),
+    headers: {"Content-Type": "application/json"},
+  );
+
+  if (response.statusCode == 200) {
+    //if (response.statusCode == HttpStatus.ok) {
+    //final response_data = json.decode(response.body); หรือ
+    final response_data = jsonDecode(response.body);
+    //print(response_data.toString());
+
+    final Room_data = await response_data.map<Room>((json) {
+      return Room.fromJson(json);
+    }).toList();
+
+    return Room_data;
+  } else {
+    throw Exception('Failed to update a Task. Error: ${response.toString()}');
+  }
+}
+
+//-----------------------------------------------------------------
+Future<List<Room>> apiInsertRoom(
+    String userId1, String userId2, String roomStatus, String roomName1, String roomImage1, String roomName2, String roomImage2) async {
+  Room room =
+  Room(userId1: userId1, userId2: userId2, roomStatus: roomStatus, roomName1: roomName1, roomImage1: roomImage1, roomName2: roomName2, roomImage2: roomImage2);
+
+  //insertmember.php
+  final response = await http.post(
+    Uri.encodeFull(
+        'https://${URL}/thaiandjourney_services/room_services/insertroom.php'),
+    body: json.encode(room.toJson()),
+    headers: {"Content-Type": "application/json"},
+  );
+
+  if (response.statusCode == 200) {
+    //if (response.statusCode == HttpStatus.ok) {
+    //final response_data = json.decode(response.body); หรือ
+    final response_data = jsonDecode(response.body);
+    //print(response_data.toString());
+
+    final Room_data = await response_data.map<Room>((json) {
+      return Room.fromJson(json);
+    }).toList();
+
+    return Room_data;
+    return response_data['message'];
+  } else {
+    throw Exception('Failed to update a Task. Error: ${response.toString()}');
+  }
+}
+
+//-----------------------------------------------------------------
 Future<List<Message>> apigetMessageChat(String roomId) async {
   Message message = Message(
     roomId: roomId,
@@ -355,7 +416,8 @@ Future<List<Message>> apigetMessageChat(String roomId) async {
   }
 }
 
-Future<String> apiInsertMessageChat(
+//-----------------------------------------------------------------
+Future<String> apiInsertMessage(
     String roomId, String userId, String mgText, String mgStatus) async {
   Message message =
   Message(roomId: roomId, userId: userId, mgText: mgText, mgStatus: mgStatus);
@@ -373,5 +435,57 @@ Future<String> apiInsertMessageChat(
     return response_data['message'];
   } else {
     throw Exception('Failed to update a Task. Error: ${response.toString()}');
+  }
+}
+
+//-----------------------------------------------------------------
+Future<String> apiUpdateMessage(
+    String mgId) async {
+  Message message =
+  Message(mgId: mgId);
+
+  //insertmember.php
+  final response = await http.post(
+    Uri.encodeFull(
+        'https://${URL}/thaiandjourney_services/room_services/updatemessage.php'),
+    body: json.encode(message.toJson()),
+    headers: {"Content-Type": "application/json"},
+  );
+
+  if (response.statusCode == 201) {
+    final response_data = await json.decode(response.body);
+    return response_data['message'];
+  } else {
+    throw Exception('Failed to update a Task. Error: ${response.toString()}');
+  }
+}
+
+//-----------------------------------------------------------------
+Future<List<Room>> apiSearchRoom(String userId, String roomName) async {
+  Room room = Room(
+    userId: userId, roomName:roomName,
+  );
+
+  final response = await http.post(
+    Uri.encodeFull(
+        'https://${URL}/thaiandjourney_services/room_services/searchroom.php'),
+    body: json.encode(room.toJson()),
+    headers: {"Content-Type": "application/json"},
+  );
+
+  if (response.statusCode == 200) {
+    //if (response.statusCode == HttpStatus.ok) {
+    //final response_data = json.decode(response.body); หรือ
+    final response_data = jsonDecode(response.body);
+    //print(response_data.toString());
+
+    final Room_data = await response_data.map<Room>((json) {
+      return Room.fromJson(json);
+    }).toList();
+
+    return Room_data;
+  } else {
+    //print(response.statusCode.toString());
+    throw Exception('Fail to load Todo from the Internet');
   }
 }

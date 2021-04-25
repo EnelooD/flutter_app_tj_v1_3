@@ -98,13 +98,14 @@ class _LoginUIState extends State<LoginUI> {
   SharedPreferences sharedPreferences;
   int LoginFlag;
 
-  _setloginFlag(String LoginEmail, String LoginName, String LoginId) async {
+  _setloginFlag(String LoginEmail, String LoginName, String LoginId, String LoginImage) async {
     sharedPreferences = await SharedPreferences.getInstance();
     setState(() {
       sharedPreferences.setInt("LoginFlag", 1);
       sharedPreferences.setString("LoginId", LoginId);
       sharedPreferences.setString("LoginName", LoginName);
       sharedPreferences.setString("LoginEmail", LoginEmail);
+      sharedPreferences.setString("LoginImage", LoginImage);
     });
   }
 
@@ -142,7 +143,7 @@ class _LoginUIState extends State<LoginUI> {
     ).then((value) {
       print(value.toString());
       if (value[0].message == '1') {
-        _setloginFlag(value[0].userEmail, value[0].userName, value[0].userId);
+        _setloginFlag(value[0].userEmail, value[0].userName, value[0].userId, value[0].userImage);
         // getMember(
         //   userEmail.text.trim(),
         // );
